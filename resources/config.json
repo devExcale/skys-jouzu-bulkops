@@ -1,0 +1,14 @@
+{
+	"unpack": {
+		"field_dictionary": "Meaning",
+		"field_reading": "Reading"
+	},
+	"pitch": {
+		"field_reading": "Reading",
+		"fields_tocolour": ["Reading"],
+		"colour_heiban": "#a4a4ff",
+		"colour_atamadaka": "red",
+		"colour_nakadaka": "green",
+		"colour_oodaka": "orange"
+	}
+}
