@@ -31,7 +31,6 @@ This feature lets you extract (and move) the reading of a word from migaku's dic
 
 The addon will look for the word in brackets and move the hiragana reading on the left to the reading field.
 
-
 Read the [configuration](#configuration) to find out how to set up right fields.
 
 ### Colouring
