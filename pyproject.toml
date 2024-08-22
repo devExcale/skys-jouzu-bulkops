@@ -1,0 +1,18 @@
+[project]
+name = "skys-jouzu-bulkops"
+version = "2024.8.22.0"
+description = "An Anki addon for Jouzu bulk operations"
+readme = "readme.md"
+requires-python = ">=3.7"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Excale", email = "dev_excale@hotmail.com" }
+]
+
+[build-system]
+requires = ["setuptools", "toml", "aqt"]
+
+[project.urls]
+"Homepage" = "https://ankiweb.net/shared/info/1803713898"
+"Source" = "https://github.com/devExcale/skys-jouzu-bulkops/"
+"Bug Reports" = "https://github.com/devExcale/skys-jouzu-bulkops/issues"
