@@ -1,5 +1,5 @@
 # Read version from file
-VERSION := $(shell cat VERSION)
+VERSION := $(shell python __version__.py)
 
 all: build
 
