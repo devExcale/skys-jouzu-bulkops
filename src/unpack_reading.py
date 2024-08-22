@@ -1,5 +1,6 @@
 import re
 from types import SimpleNamespace
+from typing import Tuple
 
 from aqt import mw
 from aqt.browser import Browser
@@ -76,7 +77,7 @@ def unpack_reading_in_cards(browser: Browser):
 	showInfo(info_msg, title="Reading Unpacking Results")
 
 
-def unpack_reading(content: str) -> tuple[str, str]:
+def unpack_reading(content: str) -> Tuple[str, str]:
 	"""
 	Unpack the content of a field into reading and meaning.
 	If the content cannot be parsed, an empty string is returned for the reading and the meaning is returned as is;
