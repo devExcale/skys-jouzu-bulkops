@@ -23,3 +23,15 @@ build:
 	# Create the .ankiaddon file
 	cd target/bin && zip -r ../skys-jouzu-bulkops-$(VERSION).ankiaddon *
 
+install: build
+	# Check install location
+	@if [ -z "$(Anki2)" ]; then echo "Set Anki2 folder location with 'Anki2' variable."; exit 1; fi
+
+	# Check whether addons21 folder exists
+	@if [ ! -d "$(Anki2)/addons21" ]; then echo "'$(Anki2)/addons21' folder does not exist."; exit 1; fi
+
+	# Remove previous installation
+	rm -rf $(Anki2)/addons21/skys-jouzu-bulkops
+
+	# Install files
+	cp -r target/bin $(Anki2)/addons21/skys-jouzu-bulkops
