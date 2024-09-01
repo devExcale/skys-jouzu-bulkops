@@ -4,6 +4,11 @@ ADDON_NAME := skys-jouzu-bulkops
 ADDON_VERSION := $(shell python __version__.py)
 addons21 := $(Anki2)/addons21
 
+# Print commands only on verbose
+ifndef VERBOSE
+	MAKEFLAGS += --silent
+endif
+
 all: build
 
 # Remove every output file
@@ -28,10 +33,10 @@ build:
 
 install: build
 	# Check install location
-	@if [ -z "$(Anki2)" ]; then echo "Set Anki2 folder location with 'Anki2' variable."; exit 1; fi
+	if [ -z "$(Anki2)" ]; then echo "Set Anki2 folder location with 'Anki2' variable."; exit 1; fi
 
 	# Check whether addons21 folder exists
-	@if [ ! -d "$(addons21)" ]; then echo "'$(addons21)' folder does not exist."; exit 1; fi
+	if [ ! -d "$(addons21)" ]; then echo "'$(addons21)' folder does not exist."; exit 1; fi
 
 	# Save previous meta.json
 	cp $(addons21)/$(ADDON_NAME)/meta.json $(addons21)/$(ADDON_NAME)-meta.json
