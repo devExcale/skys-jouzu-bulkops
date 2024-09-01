@@ -85,7 +85,7 @@ def unpack_reading_in_cards(browser: Browser):
 	).format(**counts.__dict__)
 
 	if counts.edited < counts.total:
-		info_msg += "Tip: did you set the correct fields in the config?"
+		info_msg += "\n\nTip: did you set the correct fields in the config?"
 
 	showInfo(info_msg, title="Reading Unpacking Results")
 

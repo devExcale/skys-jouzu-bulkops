@@ -125,7 +125,7 @@ def colour_fields(browser: Browser) -> None:
 	).format(**counts.__dict__)
 
 	if counts.edited < counts.total:
-		info_msg += "Tip: did you set the correct fields in the config?"
+		info_msg += "\n\nTip: did you set the correct fields in the config?"
 
 	showInfo(info_msg, title="Bulk Colouring Results")
 
