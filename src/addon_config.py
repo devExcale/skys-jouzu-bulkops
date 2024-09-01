@@ -39,7 +39,8 @@ class AddonConfig:
 		mw.addonManager.writeConfig(__name__, {
 			"unpack": {
 				"field_dictionary": self.unpack.field_dictionary,
-				"field_reading": self.unpack.field_reading
+				"field_reading": self.unpack.field_reading,
+				"tag_fail": self.unpack.tag_fail
 			},
 			"pitch": {
 				"field_reading": self.pitch.field_reading,
@@ -47,7 +48,8 @@ class AddonConfig:
 				"colour_heiban": self.pitch.colour_heiban,
 				"colour_atamadaka": self.pitch.colour_atamadaka,
 				"colour_nakadaka": self.pitch.colour_nakadaka,
-				"colour_oodaka": self.pitch.colour_oodaka
+				"colour_oodaka": self.pitch.colour_oodaka,
+				"tag_fail": self.pitch.tag_fail
 			}
 		})
 
@@ -67,6 +69,9 @@ class UnpackConfig:
 		self.need_overwrite |= b_write
 
 		self.field_reading, b_write = lookup_field(conf, "field_reading", "Reading")
+		self.need_overwrite |= b_write
+
+		self.tag_fail, b_write = lookup_field(conf, "tag_fail", "bulkops::failed-unpack")
 		self.need_overwrite |= b_write
 
 
@@ -97,6 +102,9 @@ class PitchConfig:
 		self.need_overwrite |= b_write
 
 		self.colour_oodaka, b_write = lookup_field(conf, "colour_oodaka", "orange")
+		self.need_overwrite |= b_write
+
+		self.tag_fail, b_write = lookup_field(conf, "tag_fail", "bulkops::failed-pitch")
 		self.need_overwrite |= b_write
 
 

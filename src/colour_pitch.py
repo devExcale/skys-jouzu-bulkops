@@ -62,45 +62,55 @@ def colour_fields(browser: Browser) -> None:
 		# Get note
 		note = mw.col.get_note(note_id)
 
-		# Find input field
-		if not (field_read in note):
-			counts.no_fields += 1
-			continue
+		# noinspection PyBroadException
+		try:
 
-		# Find output fields
-		if not (fields_tocolour.issubset(note.keys())):
-			counts.no_fields += 1
-			continue
+			# Find input field
+			if not (field_read in note):
+				counts.no_fields += 1
+				raise Exception("No reading field")
 
-		# Find root of accent svg
-		svg_root = find_accent_svg_root(note[field_read])
-		if svg_root is None:
-			counts.no_graph += 1
-			continue
+			# Find output fields
+			if not (fields_tocolour.issubset(note.keys())):
+				counts.no_fields += 1
+				raise Exception("Not all output fields found")
 
-		# Find pitch type
-		pitch_type = infer_pitch_type(svg_root)
-		if pitch_type is None:
-			counts.no_graph += 1
-			continue
+			# Find root of accent svg
+			svg_root = find_accent_svg_root(note[field_read])
+			if svg_root is None:
+				counts.no_graph += 1
+				raise Exception("No graph found")
 
-		colour = colours[pitch_type]
+			# Find pitch type
+			pitch_type = infer_pitch_type(svg_root)
+			if pitch_type is None:
+				counts.no_graph += 1
+				raise Exception("No graph found")
 
-		# Apply colour to the fields
-		for field in fields_tocolour:
+			colour = colours[pitch_type]
 
-			# Skip empty fields
-			text = note[field]
-			if not text:
-				continue
+			# Apply colour to the fields
+			for field in fields_tocolour:
 
-			note[field] = apply_colour(text, colour)
+				# Skip empty fields
+				text = note[field]
+				if not text:
+					continue
 
-		# Increase edited count
-		counts.edited += 1
+				note[field] = apply_colour(text, colour)
 
-		# Update the note
-		note.flush()
+			# Increase edited count
+			counts.edited += 1
+
+		except Exception:
+
+			# Add fail tag to note
+			note.add_tag(conf.tag_fail)
+
+		finally:
+
+			# Update the note
+			note.flush()
 
 	# Reset the collection and the main window
 	mw.col.reset()

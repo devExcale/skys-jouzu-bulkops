@@ -1,7 +1,8 @@
 {
 	"unpack": {
 		"field_dictionary": "Meaning",
-		"field_reading": "Reading"
+		"field_reading": "Reading",
+		"tag_fail": "bulkops::failed-unpack"
 	},
 	"pitch": {
 		"field_reading": "Reading",
@@ -9,6 +10,7 @@
 		"colour_heiban": "#a4a4ff",
 		"colour_atamadaka": "red",
 		"colour_nakadaka": "green",
-		"colour_oodaka": "orange"
+		"colour_oodaka": "orange",
+		"tag_fail": "bulkops::failed-pitch"
 	}
 }

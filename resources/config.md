@@ -5,6 +5,7 @@ Sky's Jouzu BulkOps (Config)
 
 - `field_dictionary`: The name of the field containing the dictionary's output.
 - `field_reading`: The name of the field where to store the extracted reading.
+- `tag_fail`: The tag to add to the note if the unpacking operation fails.'
 
 ### Pitch
 
@@ -14,5 +15,6 @@ Sky's Jouzu BulkOps (Config)
 - `colour_atamadaka`: The colour of atamadaka words.
 - `colour_nakadaka`: The colour of nakadaka words.
 - `colour_oodaka`: The colour of oodaka words.
+- `tag_fail`: The tag to add to the note if the colouring operation fails.'
 
 The colours can be in any css format, such as `red`, `#ff0000`, `rgb(255, 0, 0)`.

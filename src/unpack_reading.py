@@ -39,28 +39,38 @@ def unpack_reading_in_cards(browser: Browser):
 		# Get note
 		note = mw.col.get_note(note_id)
 
-		# Find i/o fields
-		if not (field_dict in note and field_read in note):
-			counts.no_fields += 1
-			continue
+		# noinspection PyBroadException
+		try:
 
-		# Unpack the fields
-		reading, meaning = unpack_reading(note[field_dict])
+			# Find i/o fields
+			if not (field_dict in note and field_read in note):
+				counts.no_fields += 1
+				raise Exception("No fields found")
 
-		# Check if no reading
-		if reading == "":
-			counts.no_reading += 1
-			continue
+			# Unpack the fields
+			reading, meaning = unpack_reading(note[field_dict])
 
-		# Update the fields
-		note[field_read] = reading
-		note[field_dict] = meaning
+			# Check if no reading
+			if reading == "":
+				counts.no_reading += 1
+				raise Exception("No reading found")
 
-		# Increase edited count
-		counts.edited += 1
+			# Update the fields
+			note[field_read] = reading
+			note[field_dict] = meaning
 
-		# Update the note
-		note.flush()
+			# Increase edited count
+			counts.edited += 1
+
+		except Exception:
+
+			# Add fail tag to note
+			note.add_tag(conf.tag_fail)
+
+		finally:
+
+			# Update the note
+			note.flush()
 
 	# Reset the collection and the main window
 	mw.col.reset()
