@@ -119,10 +119,13 @@ def colour_fields(browser: Browser) -> None:
 	# Final info message
 	info_msg = (
 		'「終わった」 (*￣▽￣)b\n\n'
-		'Edited Notes: {edited}/{total}\n'
-		'Notes w/out graph: {no_graph}\n'
-		'Notes w/out fields: {no_fields}'
+		'Edited {edited} notes out of {total} selected\n'
+		'Notes without graph: {no_graph}\n'
+		'Notes without fields: {no_fields}'
 	).format(**counts.__dict__)
+
+	if counts.edited < counts.total:
+		info_msg += "Tip: did you set the correct fields in the config?"
 
 	showInfo(info_msg, title="Bulk Colouring Results")
 

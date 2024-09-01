@@ -79,10 +79,13 @@ def unpack_reading_in_cards(browser: Browser):
 	# Final info message
 	info_msg = (
 		'「終わった」 (*￣▽￣)b\n\n'
-		'Edited Notes: {edited}/{total}\n'
-		'Notes w/out reading: {no_reading}\n'
-		'Notes w/out fields: {no_fields}'
+		'Edited {edited} notes out of {total} selected\n'
+		'Notes without reading: {no_reading}\n'
+		'Notes without fields: {no_fields}'
 	).format(**counts.__dict__)
+
+	if counts.edited < counts.total:
+		info_msg += "Tip: did you set the correct fields in the config?"
 
 	showInfo(info_msg, title="Reading Unpacking Results")
 
