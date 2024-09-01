@@ -1,5 +1,8 @@
-# Read version from file
-VERSION := $(shell python __version__.py)
+# Sky's Jouzu Bulk Operations - Makefile
+
+ADDON_NAME := skys-jouzu-bulkops
+ADDON_VERSION := $(shell python __version__.py)
+addons21 := $(Anki2)/addons21
 
 all: build
 
@@ -21,17 +24,23 @@ build:
 	cp -r resources/* target/bin
 
 	# Create the .ankiaddon file
-	cd target/bin && zip -r ../skys-jouzu-bulkops-$(VERSION).ankiaddon *
+	cd target/bin && zip -r ../$(ADDON_NAME)-$(ADDON_VERSION).ankiaddon *
 
 install: build
 	# Check install location
 	@if [ -z "$(Anki2)" ]; then echo "Set Anki2 folder location with 'Anki2' variable."; exit 1; fi
 
 	# Check whether addons21 folder exists
-	@if [ ! -d "$(Anki2)/addons21" ]; then echo "'$(Anki2)/addons21' folder does not exist."; exit 1; fi
+	@if [ ! -d "$(addons21)" ]; then echo "'$(addons21)' folder does not exist."; exit 1; fi
+
+	# Save previous meta.json
+	cp $(addons21)/$(ADDON_NAME)/meta.json $(addons21)/$(ADDON_NAME)-meta.json
 
 	# Remove previous installation
-	rm -rf $(Anki2)/addons21/skys-jouzu-bulkops
+	rm -rf $(addons21)/$(ADDON_NAME)
 
 	# Install files
-	cp -r target/bin $(Anki2)/addons21/skys-jouzu-bulkops
+	cp -r target/bin $(addons21)/$(ADDON_NAME)
+
+	# Restore meta.json
+	mv $(addons21)/$(ADDON_NAME)-meta.json $(addons21)/$(ADDON_NAME)/meta.json
