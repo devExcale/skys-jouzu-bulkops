@@ -12,9 +12,9 @@ from aqt.utils import showInfo
 from .addon_config import AddonConfig
 
 # Regex for extracting the accent section
-re_accent = re.compile(r"<!-- accent_start -->(.*)<!-- accent_end -->")
+re_accent = re.compile(r"<!-- (?:user_)?accent_start -->(.*)<!-- (?:user_)?accent_end -->")
 # Regex to check whether there's an accent section at the end
-re_accent_ends = re.compile(r"<!-- accent_start -->.*?<!-- accent_end -->$")
+re_accent_ends = re.compile(r"<!-- (?:user_)?accent_start -->.*?<!-- (?:user_)?accent_end -->$")
 # Regex to find all svg/circle tags
 re_tags = re.compile(r"</?(?:svg|circle).*?>")
 # Regex to find global font tag with colour
