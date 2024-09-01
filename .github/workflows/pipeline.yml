@@ -1,0 +1,58 @@
+name: Build and Publish
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.10
+
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install toml
+
+      - name: Get App version
+        id: app_version
+        run: |
+          echo "version=$((python __version__.py))" >> $GITHUB_OUTPUT
+
+      - name: Check version
+        id: check_version
+        run: |
+          if [[ ${{ steps.app_version.outputs.version }} =~ ^\d+(\.\d+){3}$ ]]; then
+            echo "Incorrect version format: `${{ steps.app_version.outputs.version }}`";
+            exit 1;
+          fi
+
+      - name: Build
+        run: make build
+
+      - name: Create Tag
+        run: git tag -a v${{ steps.app_version.outputs.version }} -m "Version v${{ steps.app_version.outputs.version }}"
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        id: create_release
+        with:
+          tag_name: v${{ steps.app_version.outputs.version }}
+          release_name: Release ${{ steps.app_version.outputs.version }}
+          body: Release notes
+
+      - name: Add Release Asset
+        uses: actions/upload-release-asset@v1
+        if: steps.create_release.outputs.id
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: target/skys-jouzu-bulkops-${{ steps.app_version.outputs.version }}.ankiaddon
+          asset_name: skys-jouzu-bulkops-${{ steps.app_version.outputs.version }}.ankiaddon
+          asset_content_type: application/octet-stream
