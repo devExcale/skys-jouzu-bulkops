@@ -97,7 +97,8 @@ def aqt_colour_from_pitch_selcards(browser: Browser) -> None:
 		except Exception:
 
 			# Add fail tag to note
-			note.add_tag(conf.tag_fail)
+			if conf.tag_fail:
+				note.add_tag(conf.tag_fail)
 
 		finally:
 
