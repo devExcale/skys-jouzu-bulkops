@@ -148,4 +148,4 @@ def apply_colour_to_field(text: str, colour: str, colour_graph: bool = False) ->
 		pitch_section = re_svg_graph_circle.sub(repl_colour_circle, pitch_section)
 
 	# Join the text parts and the pitch section
-	return texts[0] + pitch_section + ''.join(texts[1:]) if len(texts) > 1 else ''
+	return texts[0] + pitch_section + (''.join(texts[1:]) if len(texts) > 1 else '')

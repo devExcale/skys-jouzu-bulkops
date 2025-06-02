@@ -1,3 +1,5 @@
+import importlib
+
 from aqt import mw
 from aqt.browser import Browser
 from aqt.qt import QAction
@@ -25,11 +27,16 @@ def aqt_build_menus(browser: Browser):
 	csv_action = QAction("CSV I/O from External CSV", browser)
 	csv_action.triggered.connect(lambda: aqt_show_csv_io(browser))
 
+	# Open Configuration Dialog
+	config_action = QAction("Addon Configuration", browser)
+	config_action.triggered.connect(lambda: open_config_dialog(browser))
+
 	actions = [
 		title_action,
 		unpack_action,
 		colour_action,
 		csv_action,
+		config_action,
 	]
 
 	# Menu bar
@@ -57,3 +64,16 @@ def aqt_refresh_config() -> AddonConfig:
 		mw.addonManager.writeConfig(__name__, conf.json())
 
 	return conf
+
+
+def open_config_dialog(browser: Browser):
+	"""Reload the AddonConfigPane source file and open the dialog."""
+	# Reload the module to apply any changes to the code
+	from . import aqt_gui_config
+	from . import qt_utils
+	importlib.reload(aqt_gui_config)
+	importlib.reload(qt_utils)
+
+	# Create a new instance of AddonConfigPane
+	dialog = aqt_gui_config.AddonConfigPane(parent=browser)
+	dialog.exec()
