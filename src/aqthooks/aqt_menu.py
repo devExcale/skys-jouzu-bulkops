@@ -5,6 +5,7 @@ from aqt.browser import Browser
 from aqt.qt import QAction
 
 from .aqt_csv_io import aqt_show_csv_io
+from .aqt_gui_config import AddonConfigPane
 from .aqt_pitch import aqt_colour_from_pitch_selcards
 from .aqt_unpack import aqt_unpack_reading_selected_cards
 from ..addon_config import AddonConfig
@@ -28,15 +29,15 @@ def aqt_build_menus(browser: Browser):
 	csv_action.triggered.connect(lambda: aqt_show_csv_io(browser))
 
 	# Open Configuration Dialog
-	config_action = QAction("Addon Configuration", browser)
-	config_action.triggered.connect(lambda: open_config_dialog(browser))
+	# config_action = QAction("Addon Configuration", browser)
+	# config_action.triggered.connect(lambda: open_config_dialog(browser))
 
 	actions = [
 		title_action,
 		unpack_action,
 		colour_action,
 		csv_action,
-		config_action,
+		# config_action,
 	]
 
 	# Menu bar
