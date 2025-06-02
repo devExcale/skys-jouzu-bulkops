@@ -14,7 +14,9 @@ def aqt_unpack_reading_selected_cards(browser: Browser):
 	:return:
 	"""
 
-	conf = AddonConfig().unpack
+	dict_conf = mw.addonManager.getConfig(__name__)
+	conf = AddonConfig(dict_conf).unpack
+
 	field_dict = conf.field_dictionary
 	field_read = conf.field_reading
 
