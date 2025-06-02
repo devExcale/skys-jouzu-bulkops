@@ -33,13 +33,21 @@ build:
 
 install: build
 	# Check install location
-	if [ -z "$(Anki2)" ]; then echo "Set Anki2 folder location with 'Anki2' variable."; exit 1; fi
+	if [ -z "$(Anki2)" ]; \
+		then echo "Set Anki2 folder location with 'Anki2' variable."; \
+		exit 1; \
+	fi
 
 	# Check whether addons21 folder exists
-	if [ ! -d "$(addons21)" ]; then echo "'$(addons21)' folder does not exist."; exit 1; fi
+	if [ ! -d "$(addons21)" ]; \
+		then echo "'$(addons21)' folder does not exist."; \
+		exit 1; \
+	fi
 
-	# Save previous meta.json
-	cp $(addons21)/$(ADDON_NAME)/meta.json $(addons21)/$(ADDON_NAME)-meta.json
+	# Save previous meta.json (if present)
+	if [ -f $(addons21)/$(ADDON_NAME)/meta.json ]; then \
+		cp $(addons21)/$(ADDON_NAME)/meta.json $(addons21)/$(ADDON_NAME)-meta.json; \
+	fi
 
 	# Remove previous installation
 	rm -rf $(addons21)/$(ADDON_NAME)
@@ -47,5 +55,7 @@ install: build
 	# Install files
 	cp -r target/bin $(addons21)/$(ADDON_NAME)
 
-	# Restore meta.json
-	mv $(addons21)/$(ADDON_NAME)-meta.json $(addons21)/$(ADDON_NAME)/meta.json
+	# Restore meta.json (if previously present)
+	if [ -f $(addons21)/$(ADDON_NAME)-meta.json ]; then \
+		mv $(addons21)/$(ADDON_NAME)-meta.json $(addons21)/$(ADDON_NAME)/meta.json; \
+	fi

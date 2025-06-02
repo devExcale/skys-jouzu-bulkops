@@ -5,7 +5,7 @@ from aqt.qt import QAction
 from .aqt_csv_io import aqt_show_csv_io
 from .aqt_pitch import aqt_colour_from_pitch_selcards
 from .aqt_unpack import aqt_unpack_reading_selected_cards
-from ..addon_config import AddonConfig, config_module_name
+from ..addon_config import AddonConfig
 
 
 def aqt_build_menus(browser: Browser):
@@ -49,12 +49,11 @@ def aqt_build_menus(browser: Browser):
 
 def aqt_refresh_config() -> AddonConfig:
 	# Load configuration
-	key_conf = config_module_name()
-	dict_conf = mw.addonManager.getConfig(key_conf)
+	dict_conf = mw.addonManager.getConfig(__name__)
 	conf = AddonConfig(dict_conf)
 
 	# Save configuration if changed
 	if conf.changed:
-		mw.addonManager.writeConfig(key_conf, conf.json())
+		mw.addonManager.writeConfig(__name__, conf.json())
 
 	return conf

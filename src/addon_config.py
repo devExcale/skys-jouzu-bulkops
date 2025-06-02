@@ -141,7 +141,3 @@ def lookup_field(d: Dict[str, Any], key: str, default: Any = None) -> (Any, bool
 
 	# Return value
 	return d[key], False
-
-
-def config_module_name() -> str:
-	return __name__

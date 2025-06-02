@@ -5,8 +5,8 @@ from aqt import mw
 from aqt.browser import Browser
 from aqt.utils import showInfo
 
-from ..addon_config import AddonConfig, config_module_name
-from ..pitch import find_accent_svg_root, infer_pitch_type, apply_colour, PitchTypes
+from ..addon_config import AddonConfig
+from ..pitch import find_pitch_graph_xml, infer_pitch_type_from_graph, apply_colour_to_field, PitchTypes
 
 # Regex for extracting the accent section
 re_accent = re.compile(r"<!-- (?:user_)?accent_start -->(.*)<!-- (?:user_)?accent_end -->")
@@ -25,7 +25,7 @@ def aqt_colour_from_pitch_selcards(browser: Browser) -> None:
 	:param browser: browser object
 	"""
 
-	key_conf = mw.addonManager.getConfig(config_module_name())
+	key_conf = mw.addonManager.getConfig(__name__)
 	conf = AddonConfig(key_conf).pitch
 
 	field_read = conf.field_reading
@@ -68,13 +68,13 @@ def aqt_colour_from_pitch_selcards(browser: Browser) -> None:
 				raise Exception("Not all output fields found")
 
 			# Find root of accent svg
-			svg_root = find_accent_svg_root(note[field_read])
+			svg_root = find_pitch_graph_xml(note[field_read])
 			if svg_root is None:
 				counts.no_graph += 1
 				raise Exception("No graph found")
 
 			# Find pitch type
-			pitch_type = infer_pitch_type(svg_root)
+			pitch_type = infer_pitch_type_from_graph(svg_root)
 			if pitch_type is None:
 				counts.no_graph += 1
 				raise Exception("No graph found")
@@ -89,7 +89,7 @@ def aqt_colour_from_pitch_selcards(browser: Browser) -> None:
 				if not text:
 					continue
 
-				note[field] = apply_colour(text, colour)
+				note[field] = apply_colour_to_field(text, colour, colour_graph=conf.colour_graph)
 
 			# Increase edited count
 			counts.edited += 1
