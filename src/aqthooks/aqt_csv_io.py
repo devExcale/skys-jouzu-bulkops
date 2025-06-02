@@ -2,20 +2,19 @@ import csv
 from io import StringIO
 from typing import Dict, Optional
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QTextEdit, QPushButton, QLabel, QLayout, QSplitter, QGridLayout, \
-	QCheckBox, QButtonGroup, QWidget
 from anki.notes import NoteId
 from aqt import mw
 from aqt.browser import Browser
+from aqt.qt import Qt, QDialog, QVBoxLayout, QTextEdit, QPushButton, QLabel, QLayout, QSplitter, QGridLayout, \
+	QCheckBox, QButtonGroup, QWidget
 from aqt.utils import showInfo
 
-from .utils import get_model_columns
+from ..utils import get_model_columns
 
 col_note_id = "Note ID"
 
 
-def show_csv_io(browser: Browser) -> None:
+def aqt_show_csv_io(browser: Browser) -> None:
 	"""
 	This function will open a modal dialog with two panels: export and import.
 	Given the selected notes in the browser,

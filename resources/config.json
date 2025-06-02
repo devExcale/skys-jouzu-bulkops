@@ -11,6 +11,7 @@
 		"colour_atamadaka": "red",
 		"colour_nakadaka": "green",
 		"colour_oodaka": "orange",
-		"tag_fail": "bulkops::failed-pitch"
+		"tag_fail": "bulkops::failed-pitch",
+		"colour_graph": false
 	}
 }

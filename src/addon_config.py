@@ -1,7 +1,5 @@
 from typing import Dict, Any, Optional
 
-from aqt import mw
-
 from .utils import log
 
 
@@ -10,37 +8,42 @@ class AddonConfig:
 	Class containing the configuration parameters for the addon.
 	"""
 
-	def __init__(self):
-		self.need_overwrite = False
+	def __init__(
+			self,
+			conf: Optional[Dict[str, Any]] = None,
+	):
+		"""
+		Initializes the AddonConfig class and loads the configuration.
+		If no configuration is provided or any field is missing, it will use the default values.
+
+		:param conf: dictionary with configuration values
+		"""
 
 		log("Loading config...")
 
-		conf = mw.addonManager.getConfig(__name__)
+		self.changed = False
 
 		# Init UnpackConfig
 		unpack_conf, b_write = lookup_field(conf, "unpack")
 		self.unpack = UnpackConfig(unpack_conf)
-		self.need_overwrite |= b_write
+		self.changed |= b_write
 
 		# Init PitchConfig
 		pitch_conf, b_write = lookup_field(conf, "pitch")
 		self.pitch = PitchConfig(pitch_conf)
-		self.need_overwrite |= b_write
+		self.changed |= b_write
 
 		# Check if any of the subconfigs needs to be overwritten
-		self.need_overwrite |= self.unpack.need_overwrite or self.pitch.need_overwrite
+		self.changed |= self.unpack.changed or self.pitch.changed
 
-		# Overwrite the config if necessary
-		if self.need_overwrite:
-			log("Overwriting config...")
-			self.save()
+		return
 
-	def save(self):
-		mw.addonManager.writeConfig(__name__, {
+	def json(self):
+		return {
 			"unpack": {
 				"field_dictionary": self.unpack.field_dictionary,
 				"field_reading": self.unpack.field_reading,
-				"tag_fail": self.unpack.tag_fail
+				"tag_fail": self.unpack.tag_fail,
 			},
 			"pitch": {
 				"field_reading": self.pitch.field_reading,
@@ -49,9 +52,10 @@ class AddonConfig:
 				"colour_atamadaka": self.pitch.colour_atamadaka,
 				"colour_nakadaka": self.pitch.colour_nakadaka,
 				"colour_oodaka": self.pitch.colour_oodaka,
-				"tag_fail": self.pitch.tag_fail
+				"tag_fail": self.pitch.tag_fail,
+				"colour_graph": self.pitch.colour_graph,
 			}
-		})
+		}
 
 
 class UnpackConfig:
@@ -63,16 +67,18 @@ class UnpackConfig:
 			self,
 			conf: Optional[Dict[str, Any]] = None
 	):
-		self.need_overwrite = False
+		self.changed = False
 
 		self.field_dictionary, b_write = lookup_field(conf, "field_dictionary", "Meaning")
-		self.need_overwrite |= b_write
+		self.changed |= b_write
 
 		self.field_reading, b_write = lookup_field(conf, "field_reading", "Reading")
-		self.need_overwrite |= b_write
+		self.changed |= b_write
 
 		self.tag_fail, b_write = lookup_field(conf, "tag_fail", "bulkops::failed-unpack")
-		self.need_overwrite |= b_write
+		self.changed |= b_write
+
+		return
 
 
 class PitchConfig:
@@ -84,28 +90,33 @@ class PitchConfig:
 			self,
 			conf: Optional[Dict[str, Any]] = None
 	):
-		self.need_overwrite = False
+		self.changed = False
 
 		self.field_reading, b_write = lookup_field(conf, "field_reading", "Reading")
-		self.need_overwrite |= b_write
+		self.changed |= b_write
 
 		self.fields_tocolour, b_write = lookup_field(conf, "fields_tocolour", ["Reading"])
-		self.need_overwrite |= b_write
+		self.changed |= b_write
 
 		self.colour_heiban, b_write = lookup_field(conf, "colour_heiban", "#a4a4ff")
-		self.need_overwrite |= b_write
+		self.changed |= b_write
 
 		self.colour_atamadaka, b_write = lookup_field(conf, "colour_atamadaka", "red")
-		self.need_overwrite |= b_write
+		self.changed |= b_write
 
 		self.colour_nakadaka, b_write = lookup_field(conf, "colour_nakadaka", "green")
-		self.need_overwrite |= b_write
+		self.changed |= b_write
 
 		self.colour_oodaka, b_write = lookup_field(conf, "colour_oodaka", "orange")
-		self.need_overwrite |= b_write
+		self.changed |= b_write
 
 		self.tag_fail, b_write = lookup_field(conf, "tag_fail", "bulkops::failed-pitch")
-		self.need_overwrite |= b_write
+		self.changed |= b_write
+
+		self.colour_graph, b_write = lookup_field(conf, "colour_graph", False)
+		self.changed |= b_write
+
+		return
 
 
 def lookup_field(d: Dict[str, Any], key: str, default: Any = None) -> (Any, bool):
@@ -130,3 +141,7 @@ def lookup_field(d: Dict[str, Any], key: str, default: Any = None) -> (Any, bool
 
 	# Return value
 	return d[key], False
+
+
+def config_module_name() -> str:
+	return __name__

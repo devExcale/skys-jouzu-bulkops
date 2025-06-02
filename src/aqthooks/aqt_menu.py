@@ -1,0 +1,60 @@
+from aqt import mw
+from aqt.browser import Browser
+from aqt.qt import QAction
+
+from .aqt_csv_io import aqt_show_csv_io
+from .aqt_pitch import aqt_colour_from_pitch_selcards
+from .aqt_unpack import aqt_unpack_reading_selected_cards
+from ..addon_config import AddonConfig, config_module_name
+
+
+def aqt_build_menus(browser: Browser):
+	# Title
+	title_action = QAction("Sky's Jouzu BulkOps", browser)
+	title_action.setEnabled(False)
+
+	# Unpack Reading from Meaning
+	unpack_action = QAction("Unpack Reading from Meaning", browser)
+	unpack_action.triggered.connect(lambda: aqt_unpack_reading_selected_cards(browser))
+
+	# Colour Fields from Pitch Graph
+	colour_action = QAction("Colour Fields from Pitch Graph", browser)
+	colour_action.triggered.connect(lambda: aqt_colour_from_pitch_selcards(browser))
+
+	# CSV I/O from External CSV
+	csv_action = QAction("CSV I/O from External CSV", browser)
+	csv_action.triggered.connect(lambda: aqt_show_csv_io(browser))
+
+	actions = [
+		title_action,
+		unpack_action,
+		colour_action,
+		csv_action,
+	]
+
+	# Menu bar
+	browser.form.menuEdit.addSeparator()
+	for action in actions:
+		browser.form.menuEdit.addAction(action)
+	browser.form.menuEdit.addSeparator()
+
+	# Context menu
+	browser.form.menu_Notes.insertSeparator(browser.form.actionManage_Note_Types)
+	for action in actions:
+		browser.form.menu_Notes.insertAction(browser.form.actionManage_Note_Types, action)
+	browser.form.menu_Notes.insertSeparator(browser.form.actionManage_Note_Types)
+
+	return
+
+
+def aqt_refresh_config() -> AddonConfig:
+	# Load configuration
+	key_conf = config_module_name()
+	dict_conf = mw.addonManager.getConfig(key_conf)
+	conf = AddonConfig(dict_conf)
+
+	# Save configuration if changed
+	if conf.changed:
+		mw.addonManager.writeConfig(key_conf, conf.json())
+
+	return conf
