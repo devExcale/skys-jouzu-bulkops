@@ -5,13 +5,20 @@ from aqt.browser import Browser
 from aqt.qt import QAction
 
 from .aqt_csv_io import aqt_show_csv_io
-from .aqt_gui_config import AddonConfigPane
 from .aqt_pitch import aqt_colour_from_pitch_selcards
 from .aqt_unpack import aqt_unpack_reading_selected_cards
 from ..addon_config import AddonConfig
+from ..utils import log
 
 
-def aqt_build_menus(browser: Browser):
+def aqt_build_menus(browser: Browser) -> None:
+	"""
+	Register the actions on the browser menu bar and context menu for the addon operations.
+
+	:param browser: Anki Browser instance
+	:return: ``None``
+	"""
+
 	# Title
 	title_action = QAction("Sky's Jouzu BulkOps", browser)
 	title_action.setEnabled(False)
@@ -39,6 +46,10 @@ def aqt_build_menus(browser: Browser):
 		csv_action,
 		# config_action,
 	]
+
+	# Log actions
+	for action in actions:
+		log(f"Registering action: {action.text()}")
 
 	# Menu bar
 	browser.form.menuEdit.addSeparator()

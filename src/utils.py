@@ -1,10 +1,26 @@
+import os
 from typing import List
 
 from aqt import mw
 
+ENVKEY_LOG = "SKY_BULKOPS_LOG"
 
-def log(msg):
-	print(f"[{__name__}] {msg}")
+
+def log(msg: str) -> None:
+	"""
+	Logs a message to the console if the SKY_BULKOPS_LOG environment variable is set to a non-zero value.
+
+	:param msg: The message to log
+	:return: ``None``
+	"""
+
+	# Skip log if the environment variable is not set to a non-zero value
+	if os.environ.get(ENVKEY_LOG, '0') == '0':
+		return
+
+	print(f'[Sky\'s BulkOps/{__name__}] {msg}')
+
+	return
 
 
 def get_model_columns(model_name: str) -> List[str]:
