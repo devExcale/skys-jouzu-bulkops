@@ -1,11 +1,10 @@
 from typing import Optional
 
-from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import (
-	QDialog, QVBoxLayout, QHBoxLayout, QFormLayout,
+from aqt import mw
+from aqt.qt import (
+	Qt, QDialog, QVBoxLayout, QHBoxLayout, QFormLayout,
 	QLabel, QLineEdit, QPushButton, QCheckBox, QWidget
 )
-from aqt import mw
 
 from .qt_utils import hover_label, input_color_preview
 from ..addon_config import AddonConfig
