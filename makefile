@@ -29,7 +29,7 @@ build:
 	cp -r resources/* target/bin
 
 	# Create the .ankiaddon file
-	cd target/bin && zip -r ../$(ADDON_NAME)-$(ADDON_VERSION).ankiaddon *
+	cd target/bin && zip -r ../$(ADDON_NAME)-$(ADDON_VERSION).ankiaddon * -x __pycache__/*
 
 install: build
 	# Check install location
