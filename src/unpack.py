@@ -2,7 +2,13 @@ import re
 from typing import Tuple
 
 # Regex for extracting the reading (hiragana) this format: e.g. "たる【足る】 ★★★★"
-re_reading = re.compile(r"(.*).*【.*】.*")
+re_reading_legacy = re.compile(r"^.*?([一-龠ぁ-ゔァ-ヴーa-zA-Z0-9ａ-ｚＡ-Ｚ０-９々〆〤ヶ]+)【.*?】.*?$")
+
+# Regex for extracting the reading (hiragana) this format: e.g. "足る (たる) ★★★★"
+re_reading_modern = re.compile(r"^.*?\(([一-龠ぁ-ゔァ-ヴーa-zA-Z0-9ａ-ｚＡ-Ｚ０-９々〆〤ヶ]+)\).*?$")
+
+# Regex for extracting the reading (hiragana) this format: e.g. "たる ★★★★"
+re_reading_plain = re.compile(r"^.*?([一-龠ぁ-ゔァ-ヴーa-zA-Z0-9ａ-ｚＡ-Ｚ０-９々〆〤ヶ]+).*?$")
 
 
 def unpack_reading(content: str) -> Tuple[str, str]:
@@ -16,19 +22,35 @@ def unpack_reading(content: str) -> Tuple[str, str]:
 	"""
 
 	# Split on newline
-	split = content.split("<br>")
+	split_content = content.split("<br>")
+	n_lines = len(split_content)
 
 	# First line contains reading
-	reading = split[0]
+	expression = split_content[0]
 
-	# Extract the reading
-	match = re_reading.search(reading)
-	if match:
-		reading = match.group(1)
-	else:
+	# Count the contiguous new lines after the expressions
+	leading_lfs = 1
+	while leading_lfs < n_lines and not split_content[leading_lfs].strip():
+		leading_lfs += 1
+
+	# Extract the reading (legacy)
+	match = re_reading_legacy.search(expression)
+
+	# Extract the reading (modern)
+	if not match:
+		match = re_reading_modern.search(expression)
+
+	# Extract the reading (plain)
+	if not match:
+		match = re_reading_plain.search(expression)
+
+	# No match
+	if not match:
 		return "", content
 
+	reading = match.group(1)
+
 	# The rest is the meaning
-	meaning = '<br>'.join(split[1:])
+	meaning = '<br>'.join(split_content[leading_lfs:])
 
 	return reading, meaning
