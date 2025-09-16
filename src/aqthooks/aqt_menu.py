@@ -1,4 +1,5 @@
 import importlib
+from typing import Optional
 
 from aqt import mw
 from aqt.browser import Browser
@@ -78,7 +79,7 @@ def aqt_refresh_config() -> AddonConfig:
 	return conf
 
 
-def open_config_dialog(browser: Browser):
+def open_config_dialog(browser: Optional[Browser] = None):
 	"""Reload the AddonConfigPane source file and open the dialog."""
 	# Reload the module to apply any changes to the code
 	from . import aqt_gui_config
