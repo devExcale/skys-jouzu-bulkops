@@ -28,6 +28,9 @@ build:
 	cp -r src/* target/bin
 	cp -r resources/* target/bin
 
+	# Print release version
+	echo "VERSION = '$(ADDON_VERSION)'" > target/bin/__version__.py
+
 	# Create the .ankiaddon file
 	cd target/bin && zip -r ../$(ADDON_NAME)-$(ADDON_VERSION).ankiaddon * -x __pycache__/*
 
