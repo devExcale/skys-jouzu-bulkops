@@ -1,10 +1,11 @@
+import os
 from typing import Optional
 
 from aqt import mw
 from aqt.qt import (
 	Qt, QDialog, QVBoxLayout, QHBoxLayout, QFormLayout,
 	QLabel, QLineEdit, QPushButton, QCheckBox, QWidget,
-	QListWidget, QStackedWidget, QGroupBox
+	QListWidget, QStackedWidget, QGroupBox, QTextBrowser
 )
 
 from .qt_utils import hover_label, input_color_preview
@@ -64,6 +65,8 @@ class AddonConfigPane(QDialog):
 		self.stacked_widget.addWidget(self.__create_page_unpack__())
 		self.list_widget.addItem("Pitch Accent")
 		self.stacked_widget.addWidget(self.__create_page_pitch__())
+		self.list_widget.addItem("Changelog")
+		self.stacked_widget.addWidget(self.__create_page_changelog__())
 
 		# Connect list widget to stacked widget
 		self.list_widget.currentRowChanged.connect(self.stacked_widget.setCurrentIndex)
@@ -281,6 +284,39 @@ class AddonConfigPane(QDialog):
 		layout_pitch.addStretch(1)
 
 		return widget_pitch
+
+	@staticmethod
+	def __create_page_changelog__() -> QWidget:
+		"""
+		Create and return the widget+layout for the Changelog section.
+		"""
+
+		# Text browser for displaying the changelog
+		widget_changelog = QTextBrowser(None)
+		widget_changelog.setOpenExternalLinks(True)
+
+		try:
+
+			# Compute path to CHANGELOG.md
+			addon = mw.addonManager.addonFromModule(__name__)
+			path_addon = mw.addonManager.addonsFolder(addon)
+			path_changelog = os.path.join(path_addon, "CHANGELOG.md")
+
+			# Read changelog
+			with open(path_changelog, 'r', encoding='utf-8') as file:
+				content = file.read()
+
+		except OSError:
+			content = (
+				'# Changelog'
+				'\n\n'
+				'Changelog file not found.'
+			)
+
+		# Display content
+		widget_changelog.setMarkdown(content)
+
+		return widget_changelog
 
 	def __layout_dialog_buttons__(self) -> QHBoxLayout:
 		"""

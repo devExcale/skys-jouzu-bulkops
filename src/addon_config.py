@@ -23,6 +23,10 @@ class AddonConfig:
 
 		self.changed = False
 
+		# Init root variables
+		self.version, b_write = lookup_field(conf, "version", "")
+		self.changed |= b_write
+
 		# Init UnpackConfig
 		unpack_conf, b_write = lookup_field(conf, "unpack")
 		self.unpack = UnpackConfig(unpack_conf)
@@ -40,6 +44,7 @@ class AddonConfig:
 
 	def json(self):
 		return {
+			"version": self.version,
 			"unpack": {
 				"field_dictionary": self.unpack.field_dictionary,
 				"field_reading": self.unpack.field_reading,
