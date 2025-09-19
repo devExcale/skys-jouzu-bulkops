@@ -5,12 +5,15 @@ from aqt import mw
 from aqt.qt import (
 	Qt, QDialog, QVBoxLayout, QHBoxLayout, QFormLayout,
 	QLabel, QLineEdit, QPushButton, QCheckBox, QWidget,
-	QListWidget, QStackedWidget, QGroupBox, QTextBrowser
+	QListWidget, QStackedWidget, QGroupBox, QTextBrowser,
+	QTextEdit,
 )
 
 from .qt_utils import hover_label, input_color_preview
 from ..__version__ import VERSION
 from ..addon_config import AddonConfig
+
+import json
 
 
 class AddonConfigPane(QDialog):
@@ -59,14 +62,17 @@ class AddonConfigPane(QDialog):
 		self.stacked_widget = QStackedWidget()
 
 		# Create and add pages to the list and stack
-		self.list_widget.addItem("About")
+		self.list_widget.addItem('About')
 		self.stacked_widget.addWidget(self.__create_page_about__())
-		self.list_widget.addItem("Dictionary Unpack")
+		self.list_widget.addItem('Dictionary Unpack')
 		self.stacked_widget.addWidget(self.__create_page_unpack__())
-		self.list_widget.addItem("Pitch Accent")
+		self.list_widget.addItem('Pitch Accent')
 		self.stacked_widget.addWidget(self.__create_page_pitch__())
-		self.list_widget.addItem("Changelog")
+		self.list_widget.addItem('Changelog')
 		self.stacked_widget.addWidget(self.__create_page_changelog__())
+		self.list_widget.addItem('Raw Configuration')
+		self.stacked_widget.addWidget(self.__create_page_raw_config__())
+
 
 		# Connect list widget to stacked widget
 		self.list_widget.currentRowChanged.connect(self.stacked_widget.setCurrentIndex)
@@ -307,6 +313,7 @@ class AddonConfigPane(QDialog):
 				content = file.read()
 
 		except OSError:
+
 			content = (
 				'# Changelog'
 				'\n\n'
@@ -317,6 +324,61 @@ class AddonConfigPane(QDialog):
 		widget_changelog.setMarkdown(content)
 
 		return widget_changelog
+
+	def __create_page_raw_config__(self) -> QWidget:
+		"""
+		Create and return the widget+layout for the Raw Configuration section.
+		"""
+
+		widget_raw_config = QWidget()
+		layout_raw_config = QVBoxLayout(widget_raw_config)
+
+		# Title
+		lbl_title = QLabel('Raw Configuration')
+		lbl_title.setStyleSheet(
+			'font-size: 14pt;'
+			'font-weight: bold;'
+		)
+
+		# Description
+		lbl_description = QLabel(
+			'Here you can view and edit the raw JSON configuration for the addon.'
+			'\n'
+			'Edit this only if you know what you are doing! '
+			'Use the reset button down below to restore the previous values.'
+		)
+
+		# Reset button
+		btn_reset = QPushButton('Reset')
+		btn_reset.setToolTip('Reset the configuration to the previous values')
+		btn_reset.clicked.connect(self.__set_raw_config__)
+
+		# Text area for JSON configuration
+		self.text_edit_raw_config = QTextEdit(widget_raw_config)
+		self.text_edit_raw_config.setAcceptRichText(False)
+		self.text_edit_raw_config.setStyleSheet(
+			'font-family: Courier;'
+			'font-size: 10pt;'
+		)
+
+		# Set config (TMP)
+		self.__set_raw_config__()
+
+		# Build layout
+		layout_raw_config.addWidget(lbl_title)
+		layout_raw_config.addWidget(lbl_description)
+		layout_raw_config.addWidget(btn_reset, alignment=Qt.AlignmentFlag.AlignLeft)
+		layout_raw_config.addWidget(self.text_edit_raw_config)
+
+		return widget_raw_config
+
+	def __set_raw_config__(self) -> None:
+
+		config = AddonConfig()
+		str_config = json.dumps(config.json(), indent=4, ensure_ascii=False)
+		self.text_edit_raw_config.setPlainText(str_config)
+
+		return
 
 	def __layout_dialog_buttons__(self) -> QHBoxLayout:
 		"""
