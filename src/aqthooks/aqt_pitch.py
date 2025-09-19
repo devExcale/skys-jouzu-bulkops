@@ -45,6 +45,9 @@ def aqt_colour_from_pitch_selcards(browser: Browser) -> None:
 		no_fields=0,
 	)
 
+	# Start undo checkpoint
+	undo_id = mw.col.add_custom_undo_entry("Bulk Colour from Pitch Graph")
+
 	# Iterate over selected notes
 	for note_id in browser.selectedNotes():
 
@@ -103,10 +106,12 @@ def aqt_colour_from_pitch_selcards(browser: Browser) -> None:
 		finally:
 
 			# Update the note
-			note.flush()
+			mw.col.update_note(note)
+
+	# End undo checkpoint
+	mw.col.merge_undo_entries(undo_id)
 
 	# Reset the collection and the main window
-	mw.col.reset()
 	mw.reset()
 
 	# Final info message

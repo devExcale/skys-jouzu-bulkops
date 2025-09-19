@@ -28,6 +28,9 @@ def aqt_unpack_reading_selected_cards(browser: Browser):
 		no_fields=0,
 	)
 
+	# Start undo checkpoint
+	undo_id = mw.col.add_custom_undo_entry("Bulk Unpack Dictionary")
+
 	# Iterate over selected notes
 	for note_id in browser.selectedNotes():
 
@@ -69,10 +72,12 @@ def aqt_unpack_reading_selected_cards(browser: Browser):
 		finally:
 
 			# Update the note
-			note.flush()
+			mw.col.update_note(note)
+
+	# End undo checkpoint
+	mw.col.merge_undo_entries(undo_id)
 
 	# Reset the collection and the main window
-	mw.col.reset()
 	mw.reset()
 
 	# Final info message
