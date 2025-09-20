@@ -1,15 +1,12 @@
-import importlib
 from typing import Optional
 
-from aqt import mw
 from aqt.browser import Browser
 from aqt.qt import QAction
 
 from .aqt_csv_io import aqt_show_csv_io
 from .aqt_pitch import aqt_colour_from_pitch_selcards
 from .aqt_unpack import aqt_unpack_reading_selected_cards
-from ..addon_config import AddonConfig
-from ..utils import log
+from ..utils import log, reload_scripts
 
 
 def aqt_build_menus(browser: Browser) -> None:
@@ -67,26 +64,32 @@ def aqt_build_menus(browser: Browser) -> None:
 	return
 
 
-def aqt_refresh_config() -> AddonConfig:
-	# Load configuration
-	dict_conf = mw.addonManager.getConfig(__name__)
-	conf = AddonConfig(dict_conf)
-
-	# Save configuration if changed
-	if conf.changed:
-		mw.addonManager.writeConfig(__name__, conf.json())
-
-	return conf
-
-
 def open_config_dialog(browser: Optional[Browser] = None):
 	"""Reload the AddonConfigPane source file and open the dialog."""
-	# Reload the module to apply any changes to the code
-	from . import aqt_gui_config
-	from . import qt_utils
-	importlib.reload(aqt_gui_config)
-	importlib.reload(qt_utils)
+
+	# from . import aqt_gui_config
+	# from . import qt_utils
+	# importlib.reload(aqt_gui_config)
+	# importlib.reload(qt_utils)
+
+	# Import "dynamic" modules
+	# from . import configuration
+	# from .configuration import (
+	# 	config_dialog, dialog_module_about, dialog_module_changelog,
+	# )
+	#
+	# # Reload the modules to apply any changes to the code
+	# importlib.reload(dialog_module_about)
+	# importlib.reload(dialog_module_changelog)
+	# importlib.reload(config_dialog)
+	# importlib.reload(configuration)
+
+	reload_scripts()
+
+	from .configuration import config_dialog
+
+	dialog = config_dialog.ConfigDialog(parent=browser)
 
 	# Create a new instance of AddonConfigPane
-	dialog = aqt_gui_config.AddonConfigPane(parent=browser)
+	# dialog = aqt_gui_config.AddonConfigPane(parent=browser)
 	dialog.exec()

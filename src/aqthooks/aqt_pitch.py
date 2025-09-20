@@ -5,7 +5,7 @@ from aqt import mw
 from aqt.browser import Browser
 from aqt.utils import showInfo
 
-from ..addon_config import AddonConfig
+from ..settings import AddonSettings
 from ..pitch import find_pitch_graph_xml, infer_pitch_type_from_graph, apply_colour_to_field, PitchTypes
 
 # Regex for extracting the accent section
@@ -26,7 +26,7 @@ def aqt_colour_from_pitch_selcards(browser: Browser) -> None:
 	"""
 
 	key_conf = mw.addonManager.getConfig(__name__)
-	conf = AddonConfig(key_conf).pitch
+	conf = AddonSettings(key_conf).pitch
 
 	field_read = conf.field_reading
 	fields_tocolour = set(conf.fields_tocolour)

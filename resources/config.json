@@ -1,4 +1,6 @@
 {
+	"version": "",
+	"show_changelog": true,
 	"unpack": {
 		"field_dictionary": "Meaning",
 		"field_reading": "Reading",

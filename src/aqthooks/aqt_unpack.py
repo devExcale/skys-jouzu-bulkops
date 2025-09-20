@@ -4,7 +4,7 @@ from aqt import mw
 from aqt.browser import Browser
 from aqt.utils import showInfo
 
-from ..addon_config import AddonConfig
+from ..settings import AddonSettings
 from ..unpack import unpack_reading
 
 
@@ -15,7 +15,7 @@ def aqt_unpack_reading_selected_cards(browser: Browser):
 	"""
 
 	dict_conf = mw.addonManager.getConfig(__name__)
-	conf = AddonConfig(dict_conf).unpack
+	conf = AddonSettings(dict_conf).unpack
 
 	field_dict = conf.field_dictionary
 	field_read = conf.field_reading

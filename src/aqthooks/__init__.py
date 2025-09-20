@@ -1,12 +1,10 @@
 from aqt import mw
 
-from .aqt_gui_config import AddonConfigPane
-from .aqt_menu import aqt_build_menus, aqt_refresh_config, open_config_dialog
-from ..addon_config import AddonConfig
+from .aqt_menu import aqt_build_menus, open_config_dialog
 from ..utils import log
 
 
-def aqt_init_addon() -> AddonConfig:
+def aqt_init_addon() -> None:
 	"""
 	Init the addon, should be called once when Anki starts.
 
@@ -16,11 +14,6 @@ def aqt_init_addon() -> AddonConfig:
 	log("Registering custom configuration action")
 
 	# Add custom config dialog
-	# mw.addonManager.setConfigAction(__name__, lambda: AddonConfigPane().exec())
 	mw.addonManager.setConfigAction(__name__, open_config_dialog)
 
-	log("Reloading addon configuration")
-
-	conf = aqt_refresh_config()
-
-	return conf
+	return

@@ -3,7 +3,7 @@ from typing import Dict, Any, Optional
 from .utils import log
 
 
-class AddonConfig:
+class AddonSettings:
 	"""
 	Class containing the configuration parameters for the addon.
 	"""
@@ -21,30 +21,24 @@ class AddonConfig:
 
 		log("Loading config...")
 
-		self.changed = False
-
 		# Init root variables
-		self.version, b_write = lookup_field(conf, "version", "")
-		self.changed |= b_write
+		self.version = lookup_field(conf, "version", "")
+		self.show_changelog = lookup_field(conf, "show_changelog", True)
 
 		# Init UnpackConfig
-		unpack_conf, b_write = lookup_field(conf, "unpack")
-		self.unpack = UnpackConfig(unpack_conf)
-		self.changed |= b_write
+		unpack_conf = lookup_field(conf, "unpack")
+		self.unpack = UnpackSettings(unpack_conf)
 
 		# Init PitchConfig
-		pitch_conf, b_write = lookup_field(conf, "pitch")
-		self.pitch = PitchConfig(pitch_conf)
-		self.changed |= b_write
-
-		# Check if any of the subconfigs needs to be overwritten
-		self.changed |= self.unpack.changed or self.pitch.changed
+		pitch_conf = lookup_field(conf, "pitch")
+		self.pitch = PitchSettings(pitch_conf)
 
 		return
 
 	def json(self):
 		return {
 			"version": self.version,
+			"show_changelog": self.show_changelog,
 			"unpack": {
 				"field_dictionary": self.unpack.field_dictionary,
 				"field_reading": self.unpack.field_reading,
@@ -63,7 +57,7 @@ class AddonConfig:
 		}
 
 
-class UnpackConfig:
+class UnpackSettings:
 	"""
 	Class containing the configuration parameters for the unpacking operation.
 	"""
@@ -74,19 +68,16 @@ class UnpackConfig:
 	):
 		self.changed = False
 
-		self.field_dictionary, b_write = lookup_field(conf, "field_dictionary", "Meaning")
-		self.changed |= b_write
+		self.field_dictionary = lookup_field(conf, "field_dictionary", "Meaning")
 
-		self.field_reading, b_write = lookup_field(conf, "field_reading", "Reading")
-		self.changed |= b_write
+		self.field_reading = lookup_field(conf, "field_reading", "Reading")
 
-		self.tag_fail, b_write = lookup_field(conf, "tag_fail", "bulkops::failed-unpack")
-		self.changed |= b_write
+		self.tag_fail = lookup_field(conf, "tag_fail", "bulkops::failed-unpack")
 
 		return
 
 
-class PitchConfig:
+class PitchSettings:
 	"""
 	Class containing the configuration parameters for the pitch colouring operation.
 	"""
@@ -97,34 +88,26 @@ class PitchConfig:
 	):
 		self.changed = False
 
-		self.field_reading, b_write = lookup_field(conf, "field_reading", "Reading")
-		self.changed |= b_write
+		self.field_reading = lookup_field(conf, "field_reading", "Reading")
 
-		self.fields_tocolour, b_write = lookup_field(conf, "fields_tocolour", ["Reading"])
-		self.changed |= b_write
+		self.fields_tocolour = lookup_field(conf, "fields_tocolour", ["Reading"])
 
-		self.colour_heiban, b_write = lookup_field(conf, "colour_heiban", "#a4a4ff")
-		self.changed |= b_write
+		self.colour_heiban = lookup_field(conf, "colour_heiban", "#a4a4ff")
 
-		self.colour_atamadaka, b_write = lookup_field(conf, "colour_atamadaka", "red")
-		self.changed |= b_write
+		self.colour_atamadaka = lookup_field(conf, "colour_atamadaka", "red")
 
-		self.colour_nakadaka, b_write = lookup_field(conf, "colour_nakadaka", "green")
-		self.changed |= b_write
+		self.colour_nakadaka = lookup_field(conf, "colour_nakadaka", "green")
 
-		self.colour_oodaka, b_write = lookup_field(conf, "colour_oodaka", "orange")
-		self.changed |= b_write
+		self.colour_oodaka = lookup_field(conf, "colour_oodaka", "orange")
 
-		self.tag_fail, b_write = lookup_field(conf, "tag_fail", "bulkops::failed-pitch")
-		self.changed |= b_write
+		self.tag_fail = lookup_field(conf, "tag_fail", "bulkops::failed-pitch")
 
-		self.colour_graph, b_write = lookup_field(conf, "colour_graph", False)
-		self.changed |= b_write
+		self.colour_graph = lookup_field(conf, "colour_graph", False)
 
 		return
 
 
-def lookup_field(d: Dict[str, Any], key: str, default: Any = None) -> (Any, bool):
+def lookup_field(d: Dict[str, Any], key: str, default: Any = None) -> Any:
 	"""
 	Tries to retrieve the value of a key from a dictionary.
 	If the key is present, the value is returned and the flag return value is False;
@@ -138,11 +121,11 @@ def lookup_field(d: Dict[str, Any], key: str, default: Any = None) -> (Any, bool
 
 	# Check if dictionary is empty/None
 	if not d:
-		return default, True
+		return default
 
 	# Check if key is not in dictionary
 	if key not in d:
-		return default, True
+		return default
 
 	# Return value
-	return d[key], False
+	return d[key]
