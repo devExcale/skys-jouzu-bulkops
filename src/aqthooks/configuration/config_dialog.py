@@ -10,6 +10,7 @@ from .config_dialog_module import ConfigDialogModule
 from .dialog_module_about import AboutDialogModule
 from .dialog_module_changelog import ChangelogDialogModule
 from .dialog_module_developer import DeveloperDialogModule
+from .dialog_module_general import GeneralDialogModule
 from .dialog_module_pitch import PitchDialogModule
 from .dialog_module_unpack import UnpackDialogModule
 from ...settings import AddonSettings
@@ -21,6 +22,7 @@ reloadable_script(__name__)
 # List of configuration modules to include in the dialog
 CONFIG_MODULES: List[Type[ConfigDialogModule]] = [
 	AboutDialogModule,
+	GeneralDialogModule,
 	UnpackDialogModule,
 	PitchDialogModule,
 	ChangelogDialogModule,
@@ -191,6 +193,22 @@ class ConfigDialog(QDialog):
 		new_module = self.modules[idx]
 		new_module.__sync_settings__()
 		new_module.__on_enter__()
+
+		return
+
+	def set_module(self, module_cls: Type[ConfigDialogModule]) -> None:
+		"""
+		Sets the current configuration module to the given module class.
+
+		:param module_cls: The class of the module to switch to.
+		:return: ``None``
+		"""
+
+		# Find index of the module
+		for idx, module in enumerate(self.modules):
+			if isinstance(module, module_cls):
+				self.switch_module(idx)
+				return
 
 		return
 
