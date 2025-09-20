@@ -5,6 +5,7 @@ from typing import List
 from aqt import mw
 
 ENVKEY_LOG = "SKY_BULKOPS_LOG"
+ENVKEY_DEBUG = "SKY_BULKOPS_DEBUG"
 
 RELOAD_REGISTER = set()
 
@@ -49,10 +50,10 @@ def reloadable_script(name: str) -> None:
 	:return: ``None``
 	"""
 
-	# TODO: only on debug
+	if name not in RELOAD_REGISTER:
+		log(f"Marking module for reload: {name}")
 
 	RELOAD_REGISTER.add(name)
-	log(f"Marked module for reload: {name}")
 
 	return
 
@@ -65,6 +66,12 @@ def reload_scripts() -> None:
 
 	:return: ``None``
 	"""
+
+	# Skip reloading if the environment variable is not set to a non-zero value
+	if os.environ.get(ENVKEY_DEBUG, '0') == '0':
+		return
+
+	log("Reloading scripts...")
 
 	for _ in range(2):
 		for module_name in RELOAD_REGISTER:
