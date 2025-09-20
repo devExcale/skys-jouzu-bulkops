@@ -285,6 +285,9 @@ class ModalCSVIO(QDialog):
 			showInfo("Invalid CSV format. Ensure 'Note ID' is included as the first column.")
 			return
 
+		# Start undo checkpoint
+		undo_id = mw.col.add_custom_undo_entry("CSV Import")
+
 		# TODO: check if csv ids are in the selected notes
 
 		note_id_index = headers.index("Note ID")
@@ -294,10 +297,14 @@ class ModalCSVIO(QDialog):
 			for i, field in enumerate(headers):
 				if field != "Note ID" and field in note:
 					note[field] = row[i]
-			note.flush()
+			mw.col.update_note(note)
 
-		mw.col.reset()
+		# End undo checkpoint
+		mw.col.merge_undo_entries(undo_id)
+
+		# Reset the collection and the main window
 		mw.reset()
+
 		showInfo("Notes updated successfully.")
 
 		return
