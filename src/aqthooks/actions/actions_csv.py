@@ -5,11 +5,14 @@ from typing import Dict, Optional
 from anki.notes import NoteId
 from aqt import mw
 from aqt.browser import Browser
-from aqt.qt import Qt, QDialog, QVBoxLayout, QTextEdit, QPushButton, QLabel, QLayout, QSplitter, QGridLayout, \
-	QCheckBox, QButtonGroup, QWidget
+from aqt.qt import (
+	Qt, QDialog, QVBoxLayout, QTextEdit, QPushButton,
+	QLabel, QLayout, QSplitter, QGridLayout, QCheckBox,
+	QButtonGroup, QWidget,
+)
 from aqt.utils import showInfo
 
-from ..utils import get_model_columns
+from ...utils import get_model_columns
 
 col_note_id = "Note ID"
 

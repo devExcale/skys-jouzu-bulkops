@@ -3,9 +3,9 @@ from typing import Optional
 from aqt.browser import Browser
 from aqt.qt import QAction
 
-from .aqt_csv_io import aqt_show_csv_io
-from .aqt_pitch import aqt_colour_from_pitch_selcards
-from .aqt_unpack import aqt_unpack_reading_selected_cards
+from .actions.actions_csv import aqt_show_csv_io
+from .actions.actions_pitch import aqt_colour_from_pitch_selcards
+from .actions.actions_unpack import aqt_unpack_reading_selected_cards
 from ..utils import log, reload_scripts
 
 

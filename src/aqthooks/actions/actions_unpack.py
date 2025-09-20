@@ -4,8 +4,8 @@ from aqt import mw
 from aqt.browser import Browser
 from aqt.utils import showInfo
 
-from ..settings import AddonSettings
-from ..unpack import unpack_reading
+from ...settings import AddonSettings
+from ...unpack import unpack_reading
 
 
 def aqt_unpack_reading_selected_cards(browser: Browser):

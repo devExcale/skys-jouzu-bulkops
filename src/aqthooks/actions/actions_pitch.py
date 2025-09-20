@@ -5,15 +5,18 @@ from aqt import mw
 from aqt.browser import Browser
 from aqt.utils import showInfo
 
-from ..settings import AddonSettings
-from ..pitch import find_pitch_graph_xml, infer_pitch_type_from_graph, apply_colour_to_field, PitchTypes
+from ...pitch import find_pitch_graph_xml, infer_pitch_type_from_graph, apply_colour_to_field, PitchTypes
+from ...settings import AddonSettings
 
 # Regex for extracting the accent section
 re_accent = re.compile(r"<!-- (?:user_)?accent_start -->(.*)<!-- (?:user_)?accent_end -->")
+
 # Regex to check whether there's an accent section at the end
 re_accent_ends = re.compile(r"<!-- (?:user_)?accent_start -->.*?<!-- (?:user_)?accent_end -->$")
+
 # Regex to find all svg/circle tags
 re_tags = re.compile(r"</?(?:svg|circle).*?>")
+
 # Regex to find global font tag with colour
 re_font_color_start = re.compile(r"^<font color=\".*?\">(.*)$")
 
