@@ -1,4 +1,4 @@
-from typing import Optional, List, Type
+from typing import Optional, List, Type, Union
 
 from aqt import mw
 from aqt.qt import (
@@ -117,8 +117,10 @@ class ConfigDialog(QDialog):
 			self.stacked_widget.addWidget(module)
 			self.list_widget.addItem(module.name)
 
+		# TODO: subclass QListWidget to prevent row switcing if not allowed
+
 		# Connect the list widget to the stacked widget page
-		self.list_widget.currentRowChanged.connect(self.switch_module)
+		self.list_widget.currentRowChanged.connect(self.set_module)
 
 		# Add panels to the layout
 		self.layout_panels.addWidget(self.list_widget)
@@ -158,33 +160,55 @@ class ConfigDialog(QDialog):
 
 		return
 
-	def switch_module(self, idx: int) -> None:
+	def set_module(self, module: Union[int, Type[ConfigDialogModule]]) -> None:
 		"""
-		Switches the current configuration module to the one at the given index.
+		Switches the current configuration module to the given one.
 		The current module is first queried for approval.
 
-		:param idx: Index of the module to switch to.
+		:param module: Index or class of the module to switch to.
 		:return: ``None``
 		"""
+
+		# Determine index if given a class
+		if isinstance(module, type) and issubclass(module, ConfigDialogModule):
+			# Find index of the module
+			for idx, mod in enumerate(self.modules):
+				if isinstance(mod, module):
+					break
+			else:
+				# Exit if not found
+				return
+		else:
+			idx = module
 
 		# Skip out of bounds
 		if 0 > idx or idx >= self.stacked_widget.count():
 			return
 
+		# Tentatively set idx for QListWidget (if switching by class)
+		try:
+			self.list_widget.blockSignals(True)
+			self.list_widget.setCurrentRow(idx)
+		finally:
+			self.list_widget.blockSignals(False)
+
+		current_idx = self.stacked_widget.currentIndex()
+
 		# Skip if current
-		if idx == self.stacked_widget.currentIndex():
+		if idx == current_idx:
 			return
 
 		# Ask current module if we can leave
-		current_module = self.modules[self.stacked_widget.currentIndex()]
+		current_module = self.modules[current_idx]
 		ok = current_module.__on_leave__()
 
-		# If not ok, stay
+		# If not ok, stay and change back the list selection
 		if not ok:
-			# Change back the list selection
-			list_model = self.list_widget.model()
-			list_idx = list_model.index(self.stacked_widget.currentIndex(), 0)
-			self.list_widget.setCurrentIndex(list_idx)
+			try:
+				self.list_widget.blockSignals(True)
+				self.list_widget.setCurrentRow(current_idx)
+			finally:
+				self.list_widget.blockSignals(False)
 
 			return
 
@@ -193,22 +217,6 @@ class ConfigDialog(QDialog):
 		new_module = self.modules[idx]
 		new_module.__sync_settings__()
 		new_module.__on_enter__()
-
-		return
-
-	def set_module(self, module_cls: Type[ConfigDialogModule]) -> None:
-		"""
-		Sets the current configuration module to the given module class.
-
-		:param module_cls: The class of the module to switch to.
-		:return: ``None``
-		"""
-
-		# Find index of the module
-		for idx, module in enumerate(self.modules):
-			if isinstance(module, module_cls):
-				self.switch_module(idx)
-				return
 
 		return
 
