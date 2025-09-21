@@ -1,6 +1,6 @@
 [project]
 name = "skys-jouzu-bulkops"
-version = "2025.9.16.1"
+version = "2025.9.21.1"
 description = "An Anki addon for Jouzu bulk operations"
 readme = "readme.md"
 requires-python = ">=3.7"

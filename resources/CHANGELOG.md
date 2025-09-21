@@ -2,7 +2,7 @@
 
 ---
 
-## 2025.9.19.1
+## 2025.9.21.1
 
 - `CTRL + Z` SUPPORT!! - You can now undo bulk operations
 - Introduced changelog window
