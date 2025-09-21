@@ -2,12 +2,13 @@ import json
 from typing import TYPE_CHECKING
 
 from aqt.qt import (
-	Qt, QVBoxLayout, QLabel, QPushButton, QTextEdit
+	Qt, QVBoxLayout, QLabel, QPushButton, QTextEdit,
+	QTimer,
 )
 
 from .config_dialog_module import ConfigDialogModule
 from ...settings import AddonSettings
-from ...utils import reloadable_script
+from ...utils import reloadable_script, log
 
 if TYPE_CHECKING:
 	from .config_dialog import ConfigDialog
@@ -60,18 +61,65 @@ class DeveloperDialogModule(ConfigDialogModule):
 		btn_reset.clicked.connect(self.__sync_settings__)
 
 		# Text area for JSON configuration
-		self.text_edit_raw_config = QTextEdit(self)
-		self.text_edit_raw_config.setAcceptRichText(False)
-		self.text_edit_raw_config.setStyleSheet(
-			'font-family: Courier;'
-			'font-size: 10pt;'
-		)
+		self.text_edit_json = QTextEdit(self)
+		self.text_edit_json.setAcceptRichText(False)
 
 		# Build layout
 		layout.addWidget(lbl_title)
 		layout.addWidget(lbl_description)
 		layout.addWidget(btn_reset, alignment=Qt.AlignmentFlag.AlignLeft)
-		layout.addWidget(self.text_edit_raw_config)
+		layout.addWidget(self.text_edit_json)
+
+		# QTimer for dynamic QTextEdit styling
+		self.timer_json_styling = QTimer(self)
+		self.timer_json_styling.setSingleShot(True)
+		self.timer_json_styling.setInterval(400)
+
+		# Connect signals
+		self.text_edit_json.textChanged.connect(self.timer_json_styling.start)
+		self.timer_json_styling.timeout.connect(self.perform_json_styling)
+
+		# Style QTextEdit
+		self.perform_json_styling()
+
+		return
+
+	def perform_json_styling(self) -> None:
+
+		# Assume json is invalid
+		json_valid = False
+
+		try:
+
+			# Parse json and update validity
+			json.loads(self.text_edit_json.toPlainText())
+			json_valid = True
+
+		except json.JSONDecodeError:
+			pass
+
+		# Update stylesheet based on validity
+		if json_valid:
+			# Reset to default border style
+			stylesheet = (
+				'font-family: Courier;'
+				'font-size: 10pt;'
+			)
+		else:
+			# Custom red border for invalid JSON
+			stylesheet = (
+				'QTextEdit {'
+				'	font-family: Courier;'
+				'	font-size: 10pt;'
+				'	border: 1px solid red;'
+				'}'
+				'QTextEdit:focus {'
+				'	border: 1px solid salmon;'
+				'}'
+			)
+
+		# Apply stylesheet
+		self.text_edit_json.setStyleSheet(stylesheet)
 
 		return
 
@@ -86,7 +134,7 @@ class DeveloperDialogModule(ConfigDialogModule):
 		# Ensure valid JSON
 		try:
 
-			config_str = self.text_edit_raw_config.toPlainText()
+			config_str = self.text_edit_json.toPlainText()
 			dict_conf = json.loads(config_str)
 
 		except json.JSONDecodeError:
@@ -110,6 +158,6 @@ class DeveloperDialogModule(ConfigDialogModule):
 
 		# Pretty print JSON
 		settings_str = json.dumps(dict_conf, indent=4)
-		self.text_edit_raw_config.setPlainText(settings_str)
+		self.text_edit_json.setPlainText(settings_str)
 
 		return
